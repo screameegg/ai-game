@@ -31,6 +31,14 @@
     { x: 14 * TILE, y: 11 * TILE },
   ];
 
+  const ART = [
+    'grass', 'dirt', 'pond', 'post', 'red_ball', 'tree', 'tree2',
+    'wizard_s', 'wizard_w', 'wizard_e', 'wizard_n',
+    'slime_s', 'slime_w', 'slime_e', 'slime_n',
+    'hud_joy_base', 'hud_joy_knob', 'hud_panel', 'hud_ok',
+    'hud_btn_left', 'hud_btn_right', 'hud_btn_up', 'hud_btn_down',
+  ];
+
   class MainScene extends Phaser.Scene {
     constructor() {
       super('main');
@@ -39,19 +47,17 @@
     }
 
     preload() {
-      const a = 'art/';
-      ['grass', 'dirt', 'pond', 'post', 'red_ball', 'tree', 'tree2',
-        'wizard_s', 'wizard_w', 'wizard_e', 'wizard_n',
-        'slime_s', 'slime_w', 'slime_e', 'slime_n'].forEach((k) => {
-        this.load.image(k, `${a}${k}.png`);
-      });
+      if (typeof ASSETS !== 'undefined') {
+        Object.entries(ASSETS).forEach(([k, src]) => this.load.image(k, src));
+      } else {
+        ART.forEach((k) => this.load.image(k, `art/${k}.png`));
+      }
     }
 
     create() {
       this.cameras.main.setBackgroundColor('#0e1210');
       this.physics.world.setBounds(0, 0, WORLD_W, WORLD_H);
 
-      // Ground tiles
       for (let y = 0; y < MAP_H; y++) {
         for (let x = 0; x < MAP_W; x++) {
           const key = DIRT.has(`${x},${y}`) ? 'dirt' : 'grass';
@@ -59,19 +65,11 @@
         }
       }
 
-      // Pond (center origin)
       this.add.image(POND.x, POND.y, 'pond');
 
-      // Props with bottom origin for Y-sort feel
       this.propGroup = this.add.group();
-      POSTS.forEach((p) => {
-        const s = this.add.image(p.x, p.y, 'post').setOrigin(0.5, 1);
-        this.propGroup.add(s);
-      });
-      TREES.forEach((t) => {
-        const s = this.add.image(t.x, t.y, t.key).setOrigin(0.5, 1);
-        this.propGroup.add(s);
-      });
+      POSTS.forEach((p) => this.propGroup.add(this.add.image(p.x, p.y, 'post').setOrigin(0.5, 1)));
+      TREES.forEach((t) => this.propGroup.add(this.add.image(t.x, t.y, t.key).setOrigin(0.5, 1)));
 
       this.ball = this.add.image(BALL.x, BALL.y, 'red_ball').setOrigin(0.5, 1);
 
@@ -90,43 +88,56 @@
       this.wasd = this.input.keyboard.addKeys('W,A,S,D');
 
       this.cameras.main.setBounds(0, 0, WORLD_W, WORLD_H);
-      this.cameras.main.startFollow(this.player, true, 0.12, 0.12);
-      this.cameras.main.setZoom(Math.min(
-        this.scale.width / WORLD_W,
-        this.scale.height / WORLD_H,
-        2,
-      ) * Math.max(1, Math.min(2.2, this.scale.width / 360)));
+      this.cameras.main.startFollow(this.player, true, 0.14, 0.14);
+      const z = Phaser.Math.Clamp(this.scale.width / 320, 1.4, 2.4);
+      this.cameras.main.setZoom(z);
 
-      this.hint = this.add.text(12, 10, '左下摇杆移动 · 进池半速 · 碰红球通关', {
+      this.hint = this.add.text(12, 10, '摇杆移动 · 进池半速 · 碰红球通关', {
         fontFamily: 'system-ui,-apple-system,sans-serif',
         fontSize: '13px',
         color: '#e8eee8',
+        backgroundColor: '#00000066',
+        padding: { x: 8, y: 4 },
       }).setScrollFactor(0).setDepth(100);
 
-      this.winPanel = this.add.container(this.scale.width / 2, this.scale.height / 2).setScrollFactor(0).setDepth(200).setVisible(false);
-      const bg = this.add.rectangle(0, 0, 220, 100, 0x1c241c, 0.95).setStrokeStyle(1, 0x3a4a3a);
-      const title = this.add.text(0, -16, '第一关完成！', { fontSize: '22px', color: '#fff' }).setOrigin(0.5);
-      const sub = this.add.text(0, 18, '可继续在场景里逛', { fontSize: '13px', color: '#aab' }).setOrigin(0.5);
-      this.winPanel.add([bg, title, sub]);
+      // Win UI from art HUD
+      this.winPanel = this.add.container(this.scale.width / 2, this.scale.height / 2)
+        .setScrollFactor(0).setDepth(200).setVisible(false);
+      const panel = this.add.image(0, -10, 'hud_panel').setDisplaySize(280, 140);
+      const title = this.add.text(0, -28, '第一关完成！', {
+        fontFamily: 'system-ui,-apple-system,sans-serif',
+        fontSize: '22px',
+        color: '#fff8e8',
+      }).setOrigin(0.5);
+      const sub = this.add.text(0, 4, '可继续在场景里逛', {
+        fontFamily: 'system-ui,-apple-system,sans-serif',
+        fontSize: '13px',
+        color: '#d8c8a8',
+      }).setOrigin(0.5);
+      this.okBtn = this.add.image(0, 58, 'hud_ok').setDisplaySize(120, 56).setInteractive({ useHandCursor: true });
+      this.okBtn.on('pointerdown', () => this.winPanel.setVisible(false));
+      this.winPanel.add([panel, title, sub, this.okBtn]);
 
       this._buildJoystick();
       this.scale.on('resize', (gameSize) => {
         this.winPanel.setPosition(gameSize.width / 2, gameSize.height / 2);
         this._layoutJoystick(gameSize.width, gameSize.height);
+        const zz = Phaser.Math.Clamp(gameSize.width / 320, 1.4, 2.4);
+        this.cameras.main.setZoom(zz);
       });
     }
 
     _buildJoystick() {
-      const baseR = 52;
-      const knobR = 24;
-      this.joyBase = this.add.circle(0, 0, baseR, 0xffffff, 0.14).setStrokeStyle(2, 0xffffff, 0.3).setScrollFactor(0).setDepth(150);
-      this.joyKnob = this.add.circle(0, 0, knobR, 0xffffff, 0.4).setStrokeStyle(2, 0xffffff, 0.55).setScrollFactor(0).setDepth(151);
-      this.joyHit = this.add.circle(0, 0, baseR + 20, 0x000000, 0.001).setScrollFactor(0).setDepth(149).setInteractive();
+      this.joyBase = this.add.image(0, 0, 'hud_joy_base').setScrollFactor(0).setDepth(150).setAlpha(0.92);
+      this.joyKnob = this.add.image(0, 0, 'hud_joy_knob').setScrollFactor(0).setDepth(151);
+      this.joyBase.setDisplaySize(110, 110);
+      this.joyKnob.setDisplaySize(52, 52);
+      this.joyHitR = 58;
 
       this._layoutJoystick(this.scale.width, this.scale.height);
 
       this.input.on('pointerdown', (p) => {
-        if (Phaser.Math.Distance.Between(p.x, p.y, this.joyCX, this.joyCY) <= baseR + 24) {
+        if (Phaser.Math.Distance.Between(p.x, p.y, this.joyCX, this.joyCY) <= this.joyHitR + 16) {
           this.stick.active = true;
           this.stick.pointerId = p.id;
           this._updateStick(p.x, p.y);
@@ -148,15 +159,14 @@
     }
 
     _layoutJoystick(w, h) {
-      this.joyCX = 70;
-      this.joyCY = h - 70;
+      this.joyCX = 72;
+      this.joyCY = h - 78;
       this.joyBase.setPosition(this.joyCX, this.joyCY);
       this.joyKnob.setPosition(this.joyCX, this.joyCY);
-      this.joyHit.setPosition(this.joyCX, this.joyCY);
     }
 
     _updateStick(px, py) {
-      const max = 40;
+      const max = 36;
       let dx = px - this.joyCX;
       let dy = py - this.joyCY;
       const len = Math.hypot(dx, dy) || 1;
@@ -220,7 +230,6 @@
       if (!this.collides(nx, this.player.y)) this.player.x = nx;
       if (!this.collides(this.player.x, ny)) this.player.y = ny;
 
-      // Slime follow
       const toX = this.player.x - this.slime.x;
       const toY = this.player.y - 8 - this.slime.y;
       const toLen = Math.hypot(toX, toY);
@@ -245,7 +254,6 @@
         this.slimeTarget.y = this.slime.y;
       }
 
-      // Depth sort by feet
       this.player.setDepth(this.player.y);
       this.slime.setDepth(this.slime.y);
       this.ball.setDepth(this.ball.y);
@@ -263,24 +271,16 @@
     }
   }
 
-  const config = {
+  // eslint-disable-next-line no-new
+  new Phaser.Game({
     type: Phaser.AUTO,
     parent: 'game-container',
     width: window.innerWidth,
     height: window.innerHeight,
     backgroundColor: '#0e1210',
     pixelArt: true,
-    physics: {
-      default: 'arcade',
-      arcade: { debug: false },
-    },
-    scale: {
-      mode: Phaser.Scale.RESIZE,
-      autoCenter: Phaser.Scale.CENTER_BOTH,
-    },
+    physics: { default: 'arcade', arcade: { debug: false } },
+    scale: { mode: Phaser.Scale.RESIZE, autoCenter: Phaser.Scale.CENTER_BOTH },
     scene: [MainScene],
-  };
-
-  // eslint-disable-next-line no-new
-  new Phaser.Game(config);
+  });
 })();

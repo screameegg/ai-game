@@ -17,6 +17,12 @@ godot --path .
 
 操作：WASD / 方向键移动；进池约半速；**触碰红球**通关（到池边不够）。
 
+## 手机试玩
+
+不用安装 Godot。`web/index.html` 内嵌关卡像素图（与 `docs/index.html` 相同，供 GitHub Pages `/docs`）。左下虚拟摇杆，或用方向键。进池约半速，没有岸边硬挡；碰到红球显示「第一关完成！」。
+
+打开：https://screameegg.github.io/ai-game/
+
 ## 定稿玩法
 
 - 地图约 20×16，出生点土路西侧，红球在池内偏右

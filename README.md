@@ -19,13 +19,9 @@ godot --path .
 
 ## 手机试玩
 
-不用安装 Godot。`web/index.html` 内嵌关卡像素图（`docs/index.html` 是同一份，给 GitHub Pages 的 `/docs`）。左下虚拟摇杆，或用方向键。进池约半速，没有岸边硬挡；碰到红球显示「第一关完成！」。
+不用安装 Godot。`web/` 是 Phaser 3.80 多文件页面：`index.html`、`js/main.js`、`art/*.png`。`docs/` 是同一份，给 GitHub Pages 的 `/docs`。左下虚拟摇杆，或用方向键。进池约半速，没有岸边硬挡；碰到红球显示「第一关完成！」。
 
-手机现在打开：
-
-https://htmlpreview.github.io/?https://raw.githubusercontent.com/screameegg/ai-game/feat/level1-prototype/web/index.html
-
-Pages 打开后的地址是 https://screameegg.github.io/ai-game/ 。在仓库 Settings → Pages 选择分支 `feat/level1-prototype`、目录 `/docs`。当前令牌没有 Pages 管理权限，站点还要手动打开。
+Pages 从仓库根目录发布时，手机打开 https://screameegg.github.io/ai-game/web/ 。从 `/docs` 发布时，打开 https://screameegg.github.io/ai-game/ 。
 
 ## 定稿玩法
 

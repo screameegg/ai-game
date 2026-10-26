@@ -19,9 +19,17 @@ godot --path .
 
 ## 手机试玩
 
-不用安装 Godot。`web/` 是 Phaser 3.80「池边试炼」：三枚魔力珠（黄/红/蓝）、引导箭头和点、入水水花、史莱姆去衔蓝珠。摇杆约 10% 死区。通关面板用 `hud_panel`，标题是「试炼完成」。`docs/` 是同一份，给 GitHub Pages 的 `/docs`。
+验收请用 `web-app/`（Vite + Phaser 3 + TypeScript）。单文件 `web/` 已停用。说明见 `web-app/README.md`。
 
-Pages 从仓库根目录发布时，手机打开 https://screameegg.github.io/ai-game/web/ 。从 `/docs` 发布时，打开 https://screameegg.github.io/ai-game/ 。
+```bash
+cd web-app
+npm install
+npm run dev
+```
+
+手机现在打开：https://appreciate-mon-spencer-instantly.trycloudflare.com/
+
+`docs/` 是同一份构建结果，给 GitHub Pages 的 `/docs`。Pages 打开后的地址是 https://screameegg.github.io/ai-game/ 。右下按住冲刺（×1.6，无体力，水中不能冲，松手 0.2 秒冷却）。黄珠后箭头改指向池塘；史莱姆只在取到红珠后去衔蓝珠。
 
 ## 定稿玩法
 

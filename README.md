@@ -19,7 +19,7 @@ godot --path .
 
 ## 手机试玩
 
-不用安装 Godot。`web/` 是 Phaser 3.80 多文件页面：`index.html`、`js/main.js`、`art/*.png`。`docs/` 是同一份，给 GitHub Pages 的 `/docs`。左下摇杆、通关面板和 OK 按钮用 `art/hud_*.png` 切片。方向键也能移动。进池约半速，没有岸边硬挡；碰到红球显示「第一关完成！」，点 OK 关掉面板。
+不用安装 Godot。`web/` 是 Phaser 3.80「池边试炼」：三枚魔力珠（黄/红/蓝）、引导箭头和点、入水水花、史莱姆去衔蓝珠。摇杆约 10% 死区。通关面板用 `hud_panel`，标题是「试炼完成」。`docs/` 是同一份，给 GitHub Pages 的 `/docs`。
 
 Pages 从仓库根目录发布时，手机打开 https://screameegg.github.io/ai-game/web/ 。从 `/docs` 发布时，打开 https://screameegg.github.io/ai-game/ 。
 

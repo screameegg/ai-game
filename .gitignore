@@ -1,0 +1,26 @@
+# Godot 4 editor cache and imported resources
+.godot/
+
+# Godot 3 import sidecars (kept ignored so import policy stays consistent)
+.import/
+
+# Generated translations
+*.translation
+
+# Export configuration and build dumps
+export.cfg
+export_presets.cfg
+export/
+build/
+builds/
+*.pck
+*.apk
+*.aab
+
+# Local Godot binary (do not commit the engine)
+tools/
+
+# OS noise
+.DS_Store
+Thumbs.db
+*.tmp

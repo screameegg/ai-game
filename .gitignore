@@ -1,7 +1,8 @@
 # Godot 4 editor cache and imported resources
 .godot/
 
-# Godot 3 import sidecars (kept ignored so import policy stays consistent)
+# Godot 3 import directory. Godot 4 *.import sidecars next to art
+# are tracked (import settings); the generated cache stays in .godot/.
 .import/
 
 # Generated translations
